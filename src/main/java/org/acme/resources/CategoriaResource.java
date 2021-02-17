@@ -1,5 +1,7 @@
 package org.acme.resources;
 
+import java.util.List;
+
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -12,6 +14,11 @@ import javax.ws.rs.core.Response;
 
 import org.acme.domain.Categoria;
 import org.acme.dto.CadastrarCategoriaDTO;
+import org.acme.dto.Links;
+import org.acme.dto.Meta;
+import org.acme.dto.Pagination;
+import org.acme.dto.ResponseCategoriaList;
+import org.acme.dto.ResponseCategoriaListData;
 import org.acme.services.CategoriaService;
 
 @Path("categorias")
@@ -23,19 +30,18 @@ public class CategoriaResource {
 
 	@POST
 	public Response insert(CadastrarCategoriaDTO dto) {
-		String resp = service.insert(dto.nome);
-		if(resp == "ok") {
-			return null;
-			//return Response.created("");
-		} else {
-			return Response.status(400).build();
-		}
+		Categoria cat = service.insert(dto.nome);
+		return Response.ok(cat).build();
 	}
 	
 	@GET
-	public Response getAll() {
-		return Response.ok(service.getAll()).build();
-		//return null;
+	public ResponseCategoriaList getAll() {
+		List<Categoria> categorias = service.getAll();
+		if(categorias != null) {
+			ResponseCategoriaListData data = ResponseCategoriaListData.builder().categorias(categorias).build();
+			return ResponseCategoriaList.builder().data(data).meta(new Meta()).links(new Links()).build();
+		}
+		return null;
 	}
 	
 	@GET

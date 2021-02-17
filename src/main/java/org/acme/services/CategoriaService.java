@@ -16,22 +16,17 @@ public class CategoriaService {
     EntityManager em;
     
     @Transactional
-    public String insert(String nome) {
+    public Categoria insert(String nome) {
     	try {
     		String query = "insert into categoria values(null, ?)";
-
-        	int n = em.createNativeQuery(query, Categoria.class)
-        	   .setParameter(1, nome)
-        	   .executeUpdate();
-        	
-        	System.out.println("ID CATEGORIA= "+n);
-        	System.out.println("ID CATEGORIA= "+em.getClass());
-        	
-        	return n == 1 ? "ok": null;
+    		Categoria c = new Categoria(null, nome); 
+        	em.persist(c);
+        	return c;
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.out.println("CODE = " + e.hashCode() + ", Title = "+ e.getCause() + ", MESSAGE = " + e.getMessage());
-			return e.getMessage();
+			//return e.getMessage();
+			return null;
 		}
     }
 	
