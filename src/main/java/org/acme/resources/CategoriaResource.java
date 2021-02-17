@@ -19,6 +19,7 @@ import org.acme.dto.Meta;
 import org.acme.dto.Pagination;
 import org.acme.dto.ResponseCategoriaList;
 import org.acme.dto.ResponseCategoriaListData;
+import org.acme.exception.MyApplicationException;
 import org.acme.services.CategoriaService;
 
 @Path("categorias")
@@ -35,13 +36,16 @@ public class CategoriaResource {
 	}
 	
 	@GET
-	public ResponseCategoriaList getAll() {
-		List<Categoria> categorias = service.getAll();
-		if(categorias != null) {
+	public ResponseCategoriaList getAll() throws MyApplicationException {
+		List<Categoria> categorias;
+		try {
+			categorias = service.getAll();
 			ResponseCategoriaListData data = ResponseCategoriaListData.builder().categorias(categorias).build();
 			return ResponseCategoriaList.builder().data(data).meta(new Meta()).links(new Links()).build();
+		} catch (Exception e) {
+			throw new MyApplicationException(e.getMessage());
 		}
-		return null;
+		
 	}
 	
 	@GET
